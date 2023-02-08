@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace DevPromtheus98\Flashy\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FlashyCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'flashy';
 
     public $description = 'My command';
 

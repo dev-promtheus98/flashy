@@ -1,93 +1,167 @@
-# :package_description
+# Easy Flash Messages
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+![Example of Error Notification](https://i.imgur.com/6UnNsnp.png)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+# Copyright
+Inspired by [mercuryseries Flash Package](https://github.com/mercuryseries/flashy).
 
 ## Installation
 
-You can install the package via composer:
+### You like text ?
 
-```bash
-composer require :vendor_slug/:package_slug
-```
+First, pull in the package through Composer.
 
-You can publish and run the migrations with:
+Run `composer require dev-promtheus98/flashy`
 
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
+Note that the package are been tests only on laravel 9
 
 ## Usage
 
+Within your controllers, before you perform a redirect...
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+public function store()
+{
+    Flashy::message('Welcome Aboard!', 'http://your-awesome-link.com');
+
+    return Redirect::home();
+}
 ```
 
-## Testing
+You may also do:
+
+- `Flashy::info('Message', 'http://your-awesome-link.com')`
+- `Flashy::success('Message', 'http://your-awesome-link.com')`
+- `Flashy::error('Message', 'http://your-awesome-link.com')`
+- `Flashy::warning('Message', 'http://your-awesome-link.com')`
+- `Flashy::primary('Message', 'http://your-awesome-link.com')`
+- `Flashy::primaryDark('Message', 'http://your-awesome-link.com')`
+- `Flashy::muted('Message', 'http://your-awesome-link.com')`
+- `Flashy::mutedDark('Message', 'http://your-awesome-link.com')`
+
+Again, if using Laravel, this will set a few keys in the session:
+
+- 'flashy_notification.message' - The message you're flashing
+- 'flashy_notification.type' - A string that represents the type of notification (good for applying HTML class names)
+- 'flashy_notification.link' - The URL to redirect to on click
+
+Alternatively, again, if you're using Laravel, you may reference the `flashy()` helper function, instead of the facade. Here's an example:
+
+```php
+/**
+ * Destroy the user's session (logout).
+ *
+ * @return Response
+ */
+public function destroy()
+{
+    Auth::logout();
+
+    flashy()->success('You have been logged out.', 'http://your-awesome-link.com');
+
+    return home();
+}
+```
+
+Or, for a general information flash, just do: `flashy('Some message', 'http://your-awesome-link.com');`.
+
+With this message flashed to the session, you may now display it in your view(s). Maybe something like:
+
+```html
+@if(Session::has('flashy_notification.message'))
+<script id="flashy-template" type="text/template">
+    <div class="flashy flashy--{{ Session::get('flashy_notification.type') }}">
+        <i class="material-icons">speaker_notes</i>
+        <a href="#" class="flashy__body" target="_blank"></a>
+    </div>
+</script>
+
+<script>
+    flashy("{{ Session::get('flashy_notification.message') }}", "{{ Session::get('flashy_notification.link') }}");
+</script>
+@endif
+```
+
+Because flash messages are so common, if you want, you may use (or modify) the views that are included with this package. Simply append to your layout view:
+
+```html
+@include('flashy::message')
+```
+
+> Note that this package has jQuery has dependency. It's also better to load flashy before your body close tag.
+
+## Example
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<div class="container">
+
+    <p>Welcome to my website...</p>
+</div>
+
+<script src="//code.jquery.com/jquery.js"></script>
+@include('flashy::message')
+</body>
+</html>
+```
+
+If you need to modify the flash message partials, you can run:
 
 ```bash
-composer test
+php artisan vendor:publish
 ```
 
-## Changelog
+The two package views will now be located in the `app/views/packages/dev-promtheus98/flashy/` directory.
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+```php
+Flashy::message('Welcome aboard!', 'http://your-awesome-link.com');
 
-## Contributing
+return Redirect::home();
+```
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+```php
+Flashy::error('Sorry! Please try again.', 'http://your-awesome-link.com');
 
-## Security Vulnerabilities
+return Redirect::home();
+```
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+## Nice rendering
 
-## Credits
+For a nice rendering you may include these lines in your head:
 
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+```html
+<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700' rel='stylesheet'>
+```
 
-## License
+and override the following sections of the default flashy view:
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+```html
+<style type="text/css">
+.flashy {
+    font-family: "Source Sans Pro", Arial, sans-serif;
+    padding: 11px 30px;
+    border-radius: 4px;
+    font-weight: 400;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 16px;
+    color: #fff;
+}
+</style>
+
+<script id="flashy-template" type="text/template">
+    <div class="flashy flashy--{{ Session::get('flashy_notification.type') }}">
+        <i class="material-icons">speaker_notes</i>
+        <a href="#" class="flashy__body" target="_blank"></a>
+    </div>
+</script>
+```
