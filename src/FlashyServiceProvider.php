@@ -15,8 +15,7 @@ class FlashyServiceProvider extends PackageServiceProvider
          *
          * More info: https://github.com/spatie/laravel-package-tools
          */
-        $package
-            ->name('flashy');
+        $package->name('flashy');
     }
 
     /**
@@ -34,12 +33,12 @@ class FlashyServiceProvider extends PackageServiceProvider
     public function register()
     {
         $this->app->bind(
-            \MercurySeries\Flashy\SessionStore::class,
-            \MercurySeries\Flashy\LaravelSessionStore::class
+            \DevPromtheus98\Flashy\SessionStore::class,
+            \DevPromtheus98\Flashy\LaravelSessionStore::class
         );
 
         $this->app->singleton('flashy', function () {
-            return $this->app->make(\MercurySeries\Flashy\FlashyNotifier::class);
+            return $this->app->make(\DevPromtheus98\Flashy\FlashyNotifier::class);
         });
     }
 
@@ -50,10 +49,10 @@ class FlashyServiceProvider extends PackageServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'flashy');
+        $this->loadViewsFrom(__DIR__ . '/views', 'flashy');
 
         $this->publishes([
-            __DIR__ . '/resources/views' => base_path('resources/views/vendor/flashy')
+            __DIR__ . '/views' => base_path('resources/views/vendor/flashy')
         ]);
     }
 }

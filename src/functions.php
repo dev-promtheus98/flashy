@@ -6,7 +6,7 @@ if (! function_exists('flashy')) {
      * Arrange for a flash message.
      *
      * @param  string|null $message
-     * @return \MercurySeries\Flashy\FlashNotifier
+     * @return \DevPromtheus98\Flashy\FlashNotifier
      */
     function flashy($message = null, $link = '#')
     {

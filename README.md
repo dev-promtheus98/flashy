@@ -3,7 +3,7 @@
 ![Example of Error Notification](https://i.imgur.com/6UnNsnp.png)
 
 # Copyright
-Inspired by [mercuryseries Flash Package](https://github.com/mercuryseries/flashy).
+Inspired by [DevPromtheus98 Flash Package](https://github.com/DevPromtheus98/flashy).
 
 ## Installation
 
